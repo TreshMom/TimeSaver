@@ -1,26 +1,29 @@
+import asyncio
+
 import MainBot
 import Heap
 import threading
 
+mainBot = None
+heap = None
 
 def main():
 
     mainBot = MainBot.MainBot()
     heap = Heap.Heap()
 
-    task1 = mainBot.run
-    task2 = heap.run
+    mainBotThread = threading.Thread(target=mainBot.run)
+    heapThread = threading.Thread(target=heap.run)
 
-    threadMainBot = threading.Thread()
-    threaHeap = threading.Thread()
+    mainBotThread.start()
+    heapThread.start()
 
-    threadMainBot.join()
-    threaHeap.join()
-
-
+    mainBotThread.join()
+    heapThread.join()
 
 
-
+if __name__ == "__main__":
+    main()
 
 
 

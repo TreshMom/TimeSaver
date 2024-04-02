@@ -25,7 +25,7 @@ class MessageSchedule(Message):
 
 
 class MessageOnce(Message):
-    def __init__(self):
+    def __init__(self, context: [str]):
         self.text = None
         super().__init__()
 

@@ -14,6 +14,10 @@ class MainBot:
     def startHeap(self):
         pass
 
-
+    async def manageInputCode(self, client):
+        inputCode = None
+        # При запуске маленького бота, тг потребует у пользователя код подтверждения.
+        # Обработайте эту ситуацию - сообщите пользователю об этом и запросите у него код
+        return inputCode
 
     # Здесь логика обработки сообщений
