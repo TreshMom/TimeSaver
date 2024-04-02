@@ -20,8 +20,9 @@ class TgClient:
         self.api_id = api_id
         self.api_hash = api_hash
         self.name = name
-        self.subscribed_users = ["olivka_050, me"]
+        self.subscribed_users = ["olivka_050"]
         self.client = TelegramClient('anon', API_ID, API_HASH)
+        self.hasUniqueMessage = False
 
         self.numberOfMessagesInContext = 10
 
@@ -39,18 +40,36 @@ class TgClient:
             sender = await event.get_sender()
             sender_id = sender.id
             sender_username = sender.username
+            to = await event.get_chat()
+            to_username = None
+            if hasattr(to, 'username') and to.username:
+                to_username = to.username
+
 
             if sender_username in self.subscribed_users:
                 print(f"Received a message from {sender_username or sender_id}: {event.raw_text}")
 
                 timeOfMessage = event.date
-                timeOOfPreviousMessage = self.client.get_messages(sender_id, limit=2)[1].date
-                timeDelta = timeOfMessage - timeOOfPreviousMessage
+                lastMyMessage = None
+                lastMessages = await self.client.get_messages(sender_id, limit=100)
+                for msg in lastMessages:
+                    fromm = await msg.get_sender()
+                    if fromm.id == self.client._self_id:
+                        lastMyMessage = msg
+                        break
+                lastMyMessageDate = lastMyMessage.date
+                timeDelta = timeOfMessage - lastMyMessageDate
                 timeDeltaSeconds = timeDelta.total_seconds()
-                if timeDeltaSeconds > 3600:
+                print(f"timeDeltaSeconds {timeDeltaSeconds}")
+                if timeDeltaSeconds > 10 and not self.hasUniqueMessage:
                     print("Пауза")
                     message: Message.MessageOnce = await self.createMessage(sender_id)
                     self.addToHeap(message)
+
+            elif sender_id == self.client._self_id and to_username in self.subscribed_users:
+                if self.hasUniqueMessage:
+                    self.removeFromHeap(sender_id, to_username, "once")
+
 
     async def createMessage(self, sender_id):
         context = await self.client.get_messages(sender_id, limit=self.numberOfMessagesInContext)
@@ -67,10 +86,20 @@ class TgClient:
         code = input("Введите код подтверждения: ")
         return code
 
+    def getPhoneNumber(self):
+        # phone = await mainBot.getPhoneNumber()
+        phone = PHONE_NUMBER
+        return phone
+
+    def getPassword(self):
+        # password = await mainBot.getPassword()
+        password = PASSWORD
+        return password
+
 
     def run(self):
-        self.client.start(PHONE_NUMBER, code_callback=self.manageInputCode)
-
+        self.client.start(phone=self.getPhoneNumber, password=self.getPassword, code_callback=self.manageInputCode)
+        print("Запущен")
         self.client.run_until_disconnected()
 
 
@@ -85,6 +114,13 @@ class TgClient:
 
     def addToHeap(self, message):
         # heap.insertMessage(self)
+        self.hasUniqueMessage = True
+        pass
+
+    def removeFromHeap(self, user, subscribedUser, typeOfMessage = "once"):
+        # heap.deleteMessageFromUser(user, subscribedUser, typeOfMessage)
+        self.hasUniqueMessage = False
+        print(f"Message from {subscribedUser} has been removed from heap")
         pass
 
     def unsubscribeUser(self, userName):

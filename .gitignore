@@ -1,2 +1,4 @@
 .idea/
-./myData.py
+src/myData.py
+src/anon*
+src/__pycache__/
