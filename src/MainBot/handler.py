@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram import flags
 from aiogram.fsm.context import FSMContext
-from states import Promts
+from .states import Promts
 
 from . import kb, text, utils
 
@@ -24,7 +24,9 @@ async def menu(msg: Message):
 
 @router.callback_query(F.data == "registration")
 async def input_reg_prompt(clbck: CallbackQuery, state: FSMContext):
+    print(await state.get_state())
     await state.set_state(Promts.reg_prompt)
+    print(await state.get_state())
     await clbck.message.answer(text.reg_text)
     # await clbck.message.answer(text., reply_markup=kb.exit_kb)
 
@@ -32,3 +34,7 @@ async def input_reg_prompt(clbck: CallbackQuery, state: FSMContext):
 @router.message(Command("name"))
 async def menu(msg: Message):
     await msg.answer(text.menu, reply_markup=kb.menu_main)
+
+@router.callback_query(F.data == "add_contact"):
+async def addContact(msg: Message):
+    
