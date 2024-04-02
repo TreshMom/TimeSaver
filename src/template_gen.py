@@ -11,13 +11,13 @@ moods = [
     'relief', 'remorse', 'sadness', 'surprise', 'neutral'
 ]
 
-token = 'Я люблю тебя!'
+token = 'Я ненавижу!'
 
 def generate_template(token):
     model = pipeline(model=ru_bart)
     mood = (model(token))[0]['label']
     if mood in templates:
-        return (random.choice(templates[mood]) + random.choice(sorry))
+        return (random.choice(templates[mood]) + " " + random.choice(sorry))
     else:
         return "Я не понимаю твоего настроения. Я сейчас занят, но обязательно напишу позже!"
 
