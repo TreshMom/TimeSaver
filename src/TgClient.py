@@ -21,12 +21,14 @@ class TgClient:
         self.api_id = api_id
         self.api_hash = api_hash
         self.name = name
+
         # self.subscribed_users = ["olivka_050, me"]
         self.subscribed_users = []
         self.client = TelegramClient('anon', self.api_id, self.api_hash)
         self.hasUniqueMessage = False
         self.phone = None
         self.password = None
+
         self.numberOfMessagesInContext = 10
 
         @self.client.on(events.MessageEdited)
