@@ -9,7 +9,10 @@ from datetime import *
 
 async def registration(context: FSMContext, api_id: str, api_hash: str):
     try:
-        await context.set_data({"client" : TgClient(api_id, api_hash)})
+        client = TgClient(api_id, api_hash)
+        await context.set_data({"client" : client})
+        await client.run()
+        await client.client.run_until_disconnected()
         return 1
     except Exception as e:
         print(e)

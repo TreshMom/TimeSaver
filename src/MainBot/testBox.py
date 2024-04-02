@@ -9,13 +9,13 @@ def addMsg(item):
     with lock:
         shared_list.append(item)
 
-async def notifyMsgs():
+def notifyMsgs():
     with lock:
         print(shared_list)
         time.sleep(1)
         for i in shared_list:
             if i.is_empty():
-                await i.send()
+                asyncio.run(i.send())
     
 
 # lock = threading.Lock()
@@ -31,18 +31,15 @@ async def notifyMsgs():
 
 def loop():
     while True:
-        asyncio.run(notifyMsgs())
+        notifyMsgs()
         time.sleep(0.1)
-    
+
 # def push():
 #     for i in range(1,20):
 #         add_to_shared_list(i)
 #         time.sleep(0.5)
 
-thread1 = threading.Thread(target=loop)
-thread1.daemon = True
-thread1.start()
-# thread2.start()
-# thread2.join()
-
+# thread1 = threading.Thread(target=loop)
+# thread1.daemon = True
+# thread1.start()
 

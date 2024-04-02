@@ -46,17 +46,17 @@ class MessageOnce(Message):
 
     async def send(self):
         print(" i send to ")
-        self.text = await self.createText() 
+        self.createText() 
         await self.from_.send_message(self.to, self.text)
         self.empty = False
     
-    async def createText(self):
+    def createText(self):
         try:
-            self.text = await generate_text(self.to_reply)
+            self.text = generate_text(self.to_reply)
         except Exception as e:
             print(e)
             return -1
 
 
-async def generate_text(prev_msg : str):
+def generate_text(prev_msg : str):
     return "Tolik"

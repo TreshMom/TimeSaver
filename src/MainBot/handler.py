@@ -17,7 +17,6 @@ async def start_handler(msg: Message, state : FSMContext):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu_greet)
 
 
-
 @router.message(Command("menu"))
 @router.message(F.text == "◀️ Выйти в меню")
 # @router.message(States.main_menu)
@@ -30,6 +29,7 @@ async def menu(msg: Message, state: FSMContext):
 async def input_reg_prompt(clbck: CallbackQuery, state: FSMContext):
     await state.set_state(States.reg_prompt)
     await clbck.message.answer(text.reg_text)
+    # await menu(msg, state)
 
 
 @router.message(States.reg_prompt)
@@ -41,7 +41,7 @@ async def registration(msg: Message, state: FSMContext):
         await mesg.edit_text(text.error_text)
     else:
         await mesg.edit_text(text.reg_text_correct)
-        await menu(msg, state)
+
 
 @router.callback_query(F.data == "add_contact")
 async def input_add_con_prompt(clbck: CallbackQuery, state: FSMContext):

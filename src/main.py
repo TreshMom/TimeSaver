@@ -7,12 +7,17 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from MainBot import config
 from MainBot import handler
+import threading
+from MainBot.testBox import *
 
 
 async def main():
     bot = Bot(config.bot_token, parse_mode=ParseMode.HTML)
     dp = Dispatcher(storage=MemoryStorage())
     dp.include_router(handler.router)
+    thread1 = threading.Thread(target=loop)
+    thread1.daemon = True
+    thread1.start()
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 

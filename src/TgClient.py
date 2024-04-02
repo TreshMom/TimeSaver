@@ -4,7 +4,7 @@ import sys
 from main import *
 
 from telethon.errors import SessionPasswordNeededError
-
+import time
 from Message import Message
 import myData
 
@@ -98,14 +98,13 @@ class TgClient:
         return password
 
 
-    def run(self):
-        self.client.start(phone=self.getPhoneNumber, password=self.getPassword, code_callback=self.manageInputCode)
+    async def run(self):
+        await self.client.start()
         print("Запущен")
-        self.client.run_until_disconnected()
 
 
     async def send_message(self, userame, message):
-        print("send_message")
+        print("send_message ", message)
         await self.client.send_message(userame, message)
 
 
