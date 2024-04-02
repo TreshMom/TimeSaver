@@ -2,3 +2,5 @@
 src/myData.py
 src/anon*
 src/__pycache__/
+__pycache__
+./myData.py

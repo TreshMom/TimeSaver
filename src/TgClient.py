@@ -104,8 +104,8 @@ class TgClient:
 
 
     async def send_message(self, userame, message):
-        text = message.text
-        await self.client.send_message(userame, text)
+        print("send_message")
+        await self.client.send_message(userame, message)
 
 
     def subscribe_user(self, userName):
