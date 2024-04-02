@@ -1,7 +1,8 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class Promts(StatesGroup):
+class States(StatesGroup):
+    main_menu = State()
     reg_prompt = State()
     add_con_prompt = State()
     add_reg_prompt = State()

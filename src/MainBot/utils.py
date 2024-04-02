@@ -1,20 +1,23 @@
 
 
-def registration():
-    pass
+async def registration(info: str):
+    print(info)
+    return 1
 
 
-def add_contact():
-    pass
+async def add_contact(info: str):
+    print(info)
+    return 1
 
 
-def delete_contact():
-    pass
+async def delete_contact(info: str):
+    print(info)
+    return 1
 
 
-def add_regular_massage():
-    pass
+async def add_regular_massage(info: str):
+    print(info)
+    return 1
 
-
-def help():
-    pass
+# def help():
+#     pass
