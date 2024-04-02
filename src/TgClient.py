@@ -8,10 +8,10 @@ from telethon.errors import SessionPasswordNeededError
 import Message
 import myData
 
-API_ID = myData.API_ID
-API_HASH = myData.API_HASH
-PASSWORD = myData.PASSWORD
-PHONE_NUMBER = myData.PHONE_NUMBER
+# API_ID = myData.API_ID
+# API_HASH = myData.API_HASH
+# PASSWORD = myData.PASSWORD
+# PHONE_NUMBER = myData.PHONE_NUMBER
 
 
 class TgClient:
@@ -21,7 +21,7 @@ class TgClient:
         self.api_hash = api_hash
         self.name = name
         self.subscribed_users = ["olivka_050"]
-        self.client = TelegramClient('anon', API_ID, API_HASH)
+        self.client = TelegramClient('anon', self.api_id, self.api_hash)
         self.hasUniqueMessage = False
 
         self.numberOfMessagesInContext = 10
