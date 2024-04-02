@@ -3,9 +3,12 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram import flags
 from aiogram.fsm.context import FSMContext
+
 from .states import Promts
 
-from TgClient import TgClient
+from ..TgClient import TgClient
+
+
 
 from . import kb, text, utils
 
@@ -30,9 +33,11 @@ async def input_reg_prompt(clbck: CallbackQuery, state: FSMContext):
     await clbck.message.answer(text.reg_text)
 
 
+
 @router.message(Command("name"))
 async def menu(msg: Message):
     await msg.answer(text.menu, reply_markup=kb.menu_main)
+
 
 
 @router.message(F.text)
@@ -51,3 +56,4 @@ async def answerMsg(msg: Message, state: FSMContext):
 async def addContact(clbck: CallbackQuery, state: FSMContext):
     await state.set_state(Promts.add_con_prompt)
     await clbck.message.answer(text.conn_text)
+
