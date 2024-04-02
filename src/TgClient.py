@@ -5,7 +5,7 @@ from main import *
 
 from telethon.errors import SessionPasswordNeededError
 
-import Message
+from Message import Message
 import myData
 
 # API_ID = myData.API_ID
@@ -20,7 +20,8 @@ class TgClient:
         self.api_id = api_id
         self.api_hash = api_hash
         self.name = name
-        self.subscribed_users = ["olivka_050"]
+        #self.subscribed_users = ["olivka_050, me"]
+        self.subscribed_users = []
         self.client = TelegramClient('anon', self.api_id, self.api_hash)
         self.hasUniqueMessage = False
 
