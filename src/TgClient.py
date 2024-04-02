@@ -62,10 +62,11 @@ class TgClient:
                 timeDelta = timeOfMessage - lastMyMessageDate
                 timeDeltaSeconds = timeDelta.total_seconds()
                 print(f"timeDeltaSeconds {timeDeltaSeconds}")
-                if timeDeltaSeconds > 10 and not self.hasUniqueMessage:
+                if timeDeltaSeconds > 3600 and not self.hasUniqueMessage:
                     print("Пауза")
                     message: Message.MessageOnce = await self.createMessage(sender_id)
-                    self.addToHeap(message)
+                    if not self.hasUniqueMessage:
+                        self.addToHeap(message)
 
             elif sender_id == self.client._self_id and to_username in self.subscribed_users:
                 if self.hasUniqueMessage:
@@ -81,31 +82,33 @@ class TgClient:
         return message
 
 
-    def manageInputCode(self):
+    async def manageInputCode(self):
         print("Был запрошен код подтверждения")
         # await MainBot.MainBot.manageInputCode
         code = input("Введите код подтверждения: ")
         return code
 
-    def getPhoneNumber(self):
+    async def getPhoneNumber(self):
         # phone = await mainBot.getPhoneNumber()
-        phone = PHONE_NUMBER
+        phone = "89213830029"
         return phone
 
-    def getPassword(self):
+
+    async def getPassword(self):
         # password = await mainBot.getPassword()
-        password = PASSWORD
+        password = "Mam190572"
         return password
 
 
     async def run(self):
-        await self.client.start()
+        await self.client.start(password=self.getPassword, phone=self.getPhoneNumber, code_callback=self.manageInputCode)
         print("Запущен")
 
 
-    async def send_message(self, userame, message):
+    async def send_message(self, username, message):
         print("send_message ", message)
-        await self.client.send_message(userame, message)
+        if username in self.subscribed_users:
+            await self.client.send_message(username, message)
 
 
     def subscribe_user(self, userName):
@@ -124,7 +127,6 @@ class TgClient:
         pass
 
     def unsubscribeUser(self, userName):
-        # heap.deleteAllMessagesFromUser(tg_id)
         self.subscribed_users.remove(userName)
         pass
 

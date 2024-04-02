@@ -10,7 +10,7 @@ def addMsg(item):
 
 def notifyMsgs(loop):
     with lock:
-        print(shared_list)
+        # print(shared_list)
         time.sleep(1)
         for i in shared_list:
             if i.is_empty():
@@ -21,6 +21,6 @@ def notifyMsgs(loop):
 def while_loop(loop):
     while True:
         notifyMsgs(loop)
-        time.sleep(0.1)
+        time.sleep(5)
 
 

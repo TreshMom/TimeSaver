@@ -93,7 +93,7 @@ async def add_regular_massage(msg: Message, state: FSMContext):
     if res == -1:
         await mesg.edit_text(text.error_text)
     else:
-        await mesg.edit_text(text.del_text_correct)
+        await mesg.edit_text(text.add_reg_text_correct)
         await menu(msg, state)
 
 
