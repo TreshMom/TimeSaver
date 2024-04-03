@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import time
 
 import heapq
-import Message
+from Message import *
 
 class Heap:
 
@@ -29,14 +29,14 @@ class Heap:
         message = heapq.heappop(self.heap)
         message.send()
     
-    def delMessage(self, message: Message):
+    def delMessage(self, fromm):
         for i, val in enumerate(self.heap):
-            if val.fromm == message.fromm and val.to == message.to and val.text == message.text and val.time == message.time:
+            if val.fromm == fromm and isinstance(val, MessageSchedule):
                 self.heap[i], self.heap[-1] = self.heap[-1], self.heap[i]
                 break
         heapq.heappop(self.heap)
 
-    def delMessages(self, tgID: int):
+    def delMessages(self, tgID):
         def removeByIndices(array: list, indices: list):
             indices.sort(reverse=True)
             for index in indices:
@@ -44,7 +44,7 @@ class Heap:
             return array
         indices = []
         for i, val in enumerate(self.heap):
-            if val.to == tgID:
+            if val.fromm == tgID:
                 indices.append(i)
         self.heap = removeByIndices(self.heap, indices)
         heapq.heapify(self.heap)

@@ -2,6 +2,7 @@ from telethon import TelegramClient, events
 import asyncio
 import sys
 from main import *
+import Heap
 
 from telethon.errors import SessionPasswordNeededError
 import time
@@ -130,23 +131,24 @@ class TgClient:
         print("send_message ", message)
         if username in self.subscribed_users:
             await self.client.send_message(username, message)
+            self.hasUniqueMessage = False
 
     def subscribe_user(self, userName):
         self.subscribed_users.append(userName)
         print(f"User {userName} has been subscribed to {self.name}")
 
     def addToHeap(self, message):
-        # heap.insertMessage(self)
+        heap.addMessage(message)
         self.hasUniqueMessage = True
         pass
 
-    def removeFromHeap(self, user, subscribedUser, typeOfMessage="once"):
-        # heap.deleteMessageFromUser(user, subscribedUser, typeOfMessage)
+    def removeFromHeap(self, user, subscribedUser):
+        heap.delMessage(user, subscribedUser)
         self.hasUniqueMessage = False
         print(f"Message from {subscribedUser} has been removed from heap")
-        pass
 
-    def unsubscribeUser(self, userName):
-        self.subscribed_users.remove(userName)
-        pass
+    def unsubscribeUser(self, tgID):
+        self.subscribed_users.remove(tgID)
+        self.hasUniqueMessage = False
+        heap.delMessages(tgID)
 
