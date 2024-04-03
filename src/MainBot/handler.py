@@ -1,5 +1,3 @@
-from typing import Union
-
 from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery

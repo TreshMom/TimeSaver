@@ -135,7 +135,3 @@ class TgClient:
         self.subscribed_users.remove(userName)
         pass
 
-
-if __name__ == "__main__":
-    cl = TgClient(API_ID, API_HASH)
-    cl.run()
