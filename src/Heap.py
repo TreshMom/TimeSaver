@@ -1,12 +1,62 @@
+from datetime import datetime, timedelta
+import time
 import heapq
+from Message import *
 
 class Heap:
 
     def __init__(self):
-        pass
+        self.heap = []
+        heapq.heapify(self.heap)
+
+    def addMessage(self, message: Message):
+        heapq.heappush(self.heap, message)
+
+    def send(self, message: Message):
+        for i, val in enumerate(self.heap):
+            if val.fromm == message.fromm and val.to == message.to and val.text == message.text and val.time == message.time:
+                self.heap[i], self.heap[-1] = self.heap[-1], self.heap[i]
+                break
+        message.send()
+        heapq.heappop(self.heap)
+
+    def send(self):
+        message = heapq.heappop(self.heap)
+        message.send()
+    
+    def delMessage(self, fromm, to):
+        for i, val in enumerate(self.heap):
+            if val.fromm == fromm and val.to == to and isinstance(val, MessageSchedule):
+                self.heap[i], self.heap[-1] = self.heap[-1], self.heap[i]
+                break
+        heapq.heappop(self.heap)
+
+    def delMessages(self, tgID):
+        def removeByIndices(array: list, indices: list):
+            indices.sort(reverse=True)
+            for index in indices:
+                del array[index]
+            return array
+        indices = []
+        for i, val in enumerate(self.heap):
+            if val.fromm == tgID:
+                indices.append(i)
+        self.heap = removeByIndices(self.heap, indices)
+        heapq.heapify(self.heap)
+
+    def isEmpty(self):
+        return len(self.heap) > 0
+    
+    def top(self):
+        return self.heap[0]
 
     def run(self):
-        pass
-
-
-    # Логика хипы
+        while True:
+            if not self.isEmpty():
+                now = datetime.now()
+                minMessage = self.top()
+                minMessageTime = minMessage.time
+                if now - minMessageTime > timedelta(minutes=5):
+                    self.send()
+                    break
+                time.sleep(5)
