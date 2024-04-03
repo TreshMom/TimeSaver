@@ -18,9 +18,16 @@ def notifyMsgs(loop):
                 future.result()
     
 
-def while_loop(loop):
+def while_loop(self):
     while True:
-        notifyMsgs(loop)
+        now = datetime.now()
+        minMessage = self.heap[0]
+        minMessageTime = minMessage.time
+        if now - minMessageTime > timedelta(minutes=5):
+            if not self.heap[0].is_empty():
+                future = asyncio.run_coroutine_threadsafe(self.heap[0].send(), loop)
+                future.result()
+                break
         time.sleep(5)
 
 
