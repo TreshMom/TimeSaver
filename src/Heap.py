@@ -45,9 +45,12 @@ class Heap:
         heapq.heapify(self.heap)
 
     def isEmpty(self):
-        return len(self.heap) > 0
+        return not bool(self.heap)
     
     def top(self):
+        """
+        Check if heap is empty before usage
+        """
         return self.heap[0]
 
     def run(self):
