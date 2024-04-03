@@ -50,20 +50,36 @@ async def registration(msg: Message, state: FSMContext):
 async def get_phone_and_password(msg: Message, state: FSMContext):
     phone, password = map(lambda st: st.strip(), msg.text.split(","))
     mesg = await msg.answer(f"{phone}, {password}")
-    res = await utils.auntification(state, phone, password)
+    res = await utils.set_phone_password(state, phone, password)
     if res == -1:
         await mesg.edit_text(text.error_text)
     else:
-        # res = await utils
-        print("get_phone")
-        # await msg.answer(text.telephone_text)
-        # await state.set_state(States.phone_prompt)
+        await msg.answer(text.code_text)
+        await utils.get_code(state)
+        await state.set_state(States.code_prompt)
 
 
+@router.message(States.code_prompt)
+async def get_code(msg: Message, state: FSMContext):
+    code = check_format(msg.text)
+    if code is not None: 
+        print(code)
+        mesg = await msg.answer("krasava")
+        res = await utils.run_bot(msg, state, code) 
+        if res == -1:
+            await mesg.edit_text(text.error_text)
+        else:
+            print("disconnect")
+    else:
+        await msg.answer(text.error_text)
 
-async def get_auntification(msg: Message):
-    phone, password = map(lambda st: st.strip(), msg.text.split(","))
-    return phone, password
+
+def check_format(code: str):
+    for i in range(len(code)):
+        if (i % 2 == 1) and (code[i] != "_"):
+            return None
+    result = "".join(code.split("_"))
+    return result
 
 
 @router.callback_query(F.data == "add_contact")
@@ -91,14 +107,14 @@ async def input_del_prompt(clbck: CallbackQuery, state: FSMContext):
 
 
 @router.message(States.del_prompt)
-async def add_regular_massage(msg: Message, state: FSMContext):
+async def delete_contact(msg: Message, state: FSMContext):
     prompt = msg.text
     mesg = await msg.answer(text.check_text)
     res = await utils.delete_contact(state, prompt)
     if res == -1:
         await mesg.edit_text(text.error_text)
     else:
-        await mesg.edit_text(text.add_reg_text_correct)
+        await mesg.edit_text(text.del_text_correct)
         await menu(msg, state)
 
 
@@ -118,4 +134,3 @@ async def add_regular_massage(msg: Message, state: FSMContext):
     else:
         await mesg.edit_text(text.add_reg_text_correct)
         await menu(msg, state)
-

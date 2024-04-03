@@ -13,7 +13,7 @@ def notifyMsgs(loop):
         # print(shared_list)
         time.sleep(1)
         for i in shared_list:
-            if i.is_empty():
+            if not i.is_empty():
                 future = asyncio.run_coroutine_threadsafe(i.send(), loop)
                 future.result()
     

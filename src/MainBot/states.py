@@ -5,6 +5,7 @@ class States(StatesGroup):
     main_menu = State()
     reg_prompt = State()
     aut_prompt = State()
+    code_prompt = State()
     add_con_prompt = State()
     add_reg_prompt = State()
     del_prompt = State()

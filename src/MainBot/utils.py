@@ -5,7 +5,8 @@ from TgClient import TgClient
 from . import testBox
 import Message
 from datetime import *
-
+import aiogram.types
+from . import text
 
 async def registration(context: FSMContext, api_id: str, api_hash: str):
     try:
@@ -14,21 +15,28 @@ async def registration(context: FSMContext, api_id: str, api_hash: str):
         res = await client.run()
         if res == 1:
             return 1
-        await client.client.run_until_disconnected()
         return 2
     except Exception as e:
         print(e)
         return -1
 
 
-async def auntification(context: FSMContext, phone: str, password: str):
+async def set_phone_password(context: FSMContext, phone: str, password: str):
     client = (await context.get_data())['client']
-    client.set_phone_and_password(phone, password)
+    client.set_phone_password(phone, password)
+
+
+async def get_code(context: FSMContext):
+    client = (await context.get_data())['client']
+    await client.send_code_request()
+
+
+async def run_bot(msg: aiogram.types.Message, context: FSMContext, code: str):
+    client = (await context.get_data())['client']
+    client.set_code(code)
     try:
-        print(1)
         await client.run()
-        print(2)
-        await client.client.run_until_disconnected()
+        await msg.answer(text.reg_text_correct)
     except Exception as e:
         print(e)
         return -1
@@ -59,6 +67,3 @@ async def add_regular_massage(context: FSMContext, text_to_reply: str):
         testBox.addMsg(Message.MessageOnce(datetime.now() + timedelta(seconds=5),
                                            client, i, text_to_reply))
     return 1
-
-# def help():
-#     pass

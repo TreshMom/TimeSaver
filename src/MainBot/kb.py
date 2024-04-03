@@ -9,7 +9,6 @@ menu_main = [
     [InlineKeyboardButton(text="📝 Добавить чела", callback_data="add_contact"),
      InlineKeyboardButton(text="🖼 Удалить чела", callback_data="delete_contact")],
     [InlineKeyboardButton(text="💳 Добавить сообщение по расписанию", callback_data="add_regular_massage")],
-    [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 ]
 
 menu_greet = InlineKeyboardMarkup(inline_keyboard=menu_greet)
