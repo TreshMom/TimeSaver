@@ -8,7 +8,8 @@ lock = threading.Lock()
 heap = Heap()
 
 def addMsg(item):
-    heap.addMessage(item)
+    with lock:
+        shared_list.append(item)
 
 def notifyMsgs(loop):
     with lock:

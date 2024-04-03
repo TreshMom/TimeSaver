@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram import flags
 from aiogram.fsm.context import FSMContext
 from .testBox import *
-
+from datetime import *
 from .states import States
 
 from TgClient import TgClient
@@ -126,11 +126,19 @@ async def input_add_reg_prompt(clbck: CallbackQuery, state: FSMContext):
 
 @router.message(States.add_reg_prompt)
 async def add_regular_massage(msg: Message, state: FSMContext):
-    prompt = msg.text
-    mesg = await msg.answer(text.check_text)
-    res = await utils.add_regular_massage(state, prompt)
-    if res == -1:
-        await mesg.edit_text(text.error_text)
-    else:
-        await mesg.edit_text(text.add_reg_text_correct)
-        await menu(msg, state)
+    try:
+        tg_id, mes_to, begin, period = map(lambda st: st.strip(), msg.text.split(","))
+        mesg = await msg.answer(text.check_text)
+        print(begin)
+        begin = datetime.strptime(begin,
+                  '%d/%m/%y %H:%M:%S')
+        print(begin)
+        res = await utils.add_regular_massage(state, tg_id, mes_to, begin, period)
+        if res == -1:
+            await mesg.answer(text.error_text)
+        else:
+            await mesg.answer(text.add_reg_text_correct)
+            await menu(msg, state)
+    except Exception as e:
+        print(e)
+        await msg.answer(text.error_text)
