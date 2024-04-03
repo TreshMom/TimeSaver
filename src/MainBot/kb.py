@@ -14,5 +14,8 @@ menu_main = [
 
 menu_greet = InlineKeyboardMarkup(inline_keyboard=menu_greet)
 menu_main = InlineKeyboardMarkup(inline_keyboard=menu_main)
-exit_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="◀️ Выйти в меню")]], resize_keyboard=True)
-iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="menu")]])
+exit_kb = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text="Меню"),
+     KeyboardButton(text="Начать работу")]
+], resize_keyboard=True)
+# iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Выйти в меню", callback_data="menu")]])

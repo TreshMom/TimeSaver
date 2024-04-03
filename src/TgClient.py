@@ -8,6 +8,7 @@ import time
 from Message import Message
 import myData
 
+
 # API_ID = myData.API_ID
 # API_HASH = myData.API_HASH
 # PASSWORD = myData.PASSWORD
@@ -20,11 +21,12 @@ class TgClient:
         self.api_id = api_id
         self.api_hash = api_hash
         self.name = name
-        #self.subscribed_users = ["olivka_050, me"]
+        # self.subscribed_users = ["olivka_050, me"]
         self.subscribed_users = []
         self.client = TelegramClient('anon', self.api_id, self.api_hash)
         self.hasUniqueMessage = False
-
+        self.phone = None
+        self.password = None
         self.numberOfMessagesInContext = 10
 
         @self.client.on(events.MessageEdited)
@@ -45,7 +47,6 @@ class TgClient:
             to_username = None
             if hasattr(to, 'username') and to.username:
                 to_username = to.username
-
 
             if sender_username in self.subscribed_users:
                 print(f"Received a message from {sender_username or sender_id}: {event.raw_text}")
@@ -72,7 +73,6 @@ class TgClient:
                 if self.hasUniqueMessage:
                     self.removeFromHeap(sender_id, to_username, "once")
 
-
     async def createMessage(self, sender_id):
         context = await self.client.get_messages(sender_id, limit=self.numberOfMessagesInContext)
         contextList = []
@@ -81,35 +81,38 @@ class TgClient:
         message = Message.MessageOnce(contextList)
         return message
 
-
     async def manageInputCode(self):
         print("Был запрошен код подтверждения")
         # await MainBot.MainBot.manageInputCode
         code = input("Введите код подтверждения: ")
         return code
 
-    async def getPhoneNumber(self):
-        # phone = await mainBot.getPhoneNumber()
-        phone = "89213830029"
-        return phone
-
-
-    async def getPassword(self):
-        # password = await mainBot.getPassword()
-        password = "Mam190572"
-        return password
-
+    def set_phone_and_password(self, phone, password):
+        self.phone = phone
+        self.password = password
+        print("set_phone_and_password")
+        print(self.phone, self.password)
 
     async def run(self):
-        await self.client.start(password=self.getPassword, phone=self.getPhoneNumber, code_callback=self.manageInputCode)
+        if not self.phone or not self.password:
+            return 1
+        try:
+            print("trying")
+            await self.client.start(phone=self.phone, password=self.password)
+            await self.printShit()
+            print("after start")
+        except Exception as e:
+            print("run")
         print("Запущен")
 
+    async def printShit(self):
+        print("printShit")
+        asyncio.wait(2)
 
     async def send_message(self, username, message):
         print("send_message ", message)
         if username in self.subscribed_users:
             await self.client.send_message(username, message)
-
 
     def subscribe_user(self, userName):
         self.subscribed_users.append(userName)
@@ -120,7 +123,7 @@ class TgClient:
         self.hasUniqueMessage = True
         pass
 
-    def removeFromHeap(self, user, subscribedUser, typeOfMessage = "once"):
+    def removeFromHeap(self, user, subscribedUser, typeOfMessage="once"):
         # heap.deleteMessageFromUser(user, subscribedUser, typeOfMessage)
         self.hasUniqueMessage = False
         print(f"Message from {subscribedUser} has been removed from heap")
