@@ -2,14 +2,14 @@ import threading
 import time
 import asyncio
 from datetime import datetime, timedelta
-import Heap
+from Heap import *
 
 lock = threading.Lock()
 heap = Heap()
 
 def addMsg(item):
     with lock:
-        shared_list.append(item)
+        heap.addMessage(item)
 
 def notifyMsgs(loop):
     with lock:
