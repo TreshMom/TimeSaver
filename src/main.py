@@ -20,7 +20,7 @@ async def main():
     bot = Bot(config.bot_token, parse_mode=ParseMode.HTML)
     dp = Dispatcher(storage=MemoryStorage())
     dp.include_router(handler.router)
-    thread1 = threading.Thread(target=heap.run, args=(ioloop,))
+    thread1 = threading.Thread(target=while_loop, args=(ioloop,))
     thread1.daemon = True
     thread1.start()
     await bot.delete_webhook(drop_pending_updates=True)
