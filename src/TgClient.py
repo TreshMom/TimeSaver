@@ -119,7 +119,7 @@ class TgClient:
             if not await self.client.is_user_authorized():
                 print("trying")
                 await self.client.sign_in(phone=self.phone, code=self.code, password=self.password)
-                await self.client.client.run_until_disconnected()
+                await self.client.run_until_disconnected()
                 print("after start")
             return 0
         except Exception as e:
@@ -129,9 +129,7 @@ class TgClient:
 
     async def send_message(self, username, message):
         print("send_message ", message)
-        if username in self.subscribed_users:
-            await self.client.send_message(username, message)
-            self.hasUniqueMessage = False
+        await self.client.send_message(username, message)
 
     def subscribe_user(self, userName):
         self.subscribed_users.append(userName)

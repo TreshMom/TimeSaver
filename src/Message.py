@@ -23,23 +23,19 @@ class Message(ABC):
 
 
 class MessageSchedule(Message):
-    def __init__(self, text, json_sheduler_info : Dict[int,Dict[int, str]]):
-        #  json_sheduler_info:
-        #  json_sheduler_info = day -> hour -> text_to_reply[string]
-        #
-        self.info_scheduler = json_sheduler_info
-        self.text = text
-        super().__init__()
+    def __init__(self, period: timedelta, start: datetime,  *args, **kwars):
+        super().__init__(*args, **kwars)
+        self.period = period
+        self.start = start
+        self.closest_time_to_send = start
 
     async def send(self):
-        await self.from_.send_message(self.to, self.text)
-        day_now = datetime.day
-        hour_now = datetime.hour
-        self.closest_time_to_send = self.set_new_time()
-        self.empty = False
+        await self.from_.send_message(self.to, self.to_reply)
+        if self.closest_time_to_send >= datetime.now():
+            self.closest_time_to_send = self.set_new_time()
 
     def set_new_time(self):
-        return datetime
+        return self.closest_time_to_send + self.period
 
     def __str__(self) -> str:
         return self.text
