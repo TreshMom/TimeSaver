@@ -29,9 +29,9 @@ class Heap:
         message = heapq.heappop(self.heap)
         message.send()
     
-    def delMessage(self, fromm):
+    def delMessage(self, fromm, to):
         for i, val in enumerate(self.heap):
-            if val.fromm == fromm and isinstance(val, MessageSchedule):
+            if val.fromm == fromm and val.to == to and isinstance(val, MessageSchedule):
                 self.heap[i], self.heap[-1] = self.heap[-1], self.heap[i]
                 break
         heapq.heappop(self.heap)
