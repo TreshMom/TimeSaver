@@ -1,6 +1,7 @@
 import logging
 import asyncio
 import time
+import Heap
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
@@ -13,6 +14,7 @@ from MainBot.testBox import *
 
 ioloop = asyncio.get_event_loop()
 
+heap = Heap()
 
 async def main():
     bot = Bot(config.bot_token, parse_mode=ParseMode.HTML)
