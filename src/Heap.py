@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 import time
-
 import heapq
 from Message import *
 
@@ -11,10 +10,6 @@ class Heap:
         heapq.heapify(self.heap)
 
     def addMessage(self, message: Message):
-        # нужно добавить время (datetime) получения сообщения -> message.time
-        # добавьте в class Message     
-        # def __lt__(self, other):
-        #     return self.time < other.time
         heapq.heappush(self.heap, message)
 
     def send(self, message: Message):
@@ -49,12 +44,19 @@ class Heap:
         self.heap = removeByIndices(self.heap, indices)
         heapq.heapify(self.heap)
 
+    def isEmpty(self):
+        return len(self.heap) > 0
+    
+    def top(self):
+        return self.heap[0]
+
     def run(self):
         while True:
-            now = datetime.now()
-            minMessage = self.heap[0]
-            minMessageTime = minMessage.time
-            if now - minMessageTime > timedelta(minutes=5):
-                self.send()
-                break
-            time.sleep(5)
+            if not self.isEmpty():
+                now = datetime.now()
+                minMessage = self.top()
+                minMessageTime = minMessage.time
+                if now - minMessageTime > timedelta(minutes=5):
+                    self.send()
+                    break
+                time.sleep(5)

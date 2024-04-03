@@ -2,12 +2,12 @@ from telethon import TelegramClient, events
 import asyncio
 import sys
 from main import *
-import Heap
+from MainBot.testBox import heap
 
 from telethon.errors import SessionPasswordNeededError
 import time
 from Message import Message
-import myData
+# import myData
 import MainBot.handler as mainbot
 import datetime
 

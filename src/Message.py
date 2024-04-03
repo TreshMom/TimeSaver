@@ -10,6 +10,7 @@ class Message(ABC):
         self.to_reply: str = text_to_reply
         self.closest_time_to_send: datetime = None
         self.empty = False
+        self.time = datetime.now()
 
     @abstractmethod
     def send(self):
@@ -20,6 +21,9 @@ class Message(ABC):
 
     def is_empty(self):
         return self.empty
+    
+    def __lt__(self, other):
+        return self.time < other.time
 
 
 class MessageSchedule(Message):

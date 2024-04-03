@@ -2,7 +2,7 @@ import threading
 import time
 import asyncio
 from datetime import datetime, timedelta
-from Heap import *
+from Heap import Heap
 
 lock = threading.Lock()
 heap = Heap()
@@ -19,18 +19,19 @@ def notifyMsgs(loop):
             if not i.is_empty():
                 future = asyncio.run_coroutine_threadsafe(i.send(), loop)
                 future.result()
-    
 
 def while_loop(loop):
     while True:
-        now = datetime.now()
-        minMessage = heap.heap[0]
-        minMessageTime = minMessage.time
-        if now - minMessageTime > timedelta(minutes=5):
-            if not heap.heap[0].is_empty():
-                future = asyncio.run_coroutine_threadsafe(heap.heap[0].send(), loop)
-                future.result()
-                break
-        time.sleep(5)
+        if not heap.isEmpty():
+            print(heap)
+            now = datetime.now()
+            minMessage = heap.top()
+            minMessageTime = minMessage.time
+            if now - minMessageTime > timedelta(minutes=5):
+                if not heap.isEmpty() and not heap.top().is_empty():
+                    future = asyncio.run_coroutine_threadsafe(heap.top().send(), loop)
+                    future.result()
+                    break
+            time.sleep(5)
 
 
