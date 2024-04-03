@@ -61,9 +61,8 @@ async def delete_contact(context: FSMContext, info: str):
         return -1
 
 
-async def add_regular_massage(context: FSMContext, text_to_reply: str):
+async def add_regular_massage(context: FSMContext, to: str, text_to_reply: str, begin : datetime, period: timedelta):
+    print(to, text_to_reply, begin, period)
     client = (await context.get_data())["client"]
-    for i in client.subscribed_users:
-        testBox.addMsg(Message.MessageOnce(datetime.now() + timedelta(seconds=5),
-                                           client, i, text_to_reply))
+    testBox.addMsg(Message.MessageSchedule(period, begin, client, to, text_to_reply))
     return 1
