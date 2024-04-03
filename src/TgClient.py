@@ -6,17 +6,11 @@ from MainBot.testBox import heap
 
 from telethon.errors import SessionPasswordNeededError
 import time
-from Message import Message
-# import myData
 
+from Message import *
 import MainBot.handler as mainbot
 import datetime
 
-
-# API_ID = myData.API_ID
-# API_HASH = myData.API_HASH
-# PASSWORD = myData.PASSWORD
-# PHONE_NUMBER = myData.PHONE_NUMBER
 
 def get_name():
     return str((datetime.datetime.now() - datetime.datetime(2021,1,1)).total_seconds()) + ".session"
@@ -28,7 +22,6 @@ class TgClient:
         self.api_hash = api_hash
         self.name = name
 
-        # self.subscribed_users = ["olivka_050, me"]
         self.subscribed_users = []
         self.client = TelegramClient(get_name(), self.api_id, self.api_hash)
         self.hasUniqueMessage = False
@@ -43,7 +36,9 @@ class TgClient:
             sender_id = sender.id
             sender_username = sender.username
             to = await event.get_chat()
+            to_id = to.id
             to_username = None
+            print("ПОЛУЧЕНО СООБЩЕНИЕ")
             if hasattr(to, 'username') and to.username:
                 to_username = to.username
 
@@ -64,33 +59,26 @@ class TgClient:
                 print(f"timeDeltaSeconds {timeDeltaSeconds}")
                 if timeDeltaSeconds > 3600 and not self.hasUniqueMessage:
                     print("Пауза")
-                    message: Message.MessageOnce = await self.createMessage(sender_id)
+                    message: MessageOnce = await self.createMessage(sender_id)
                     if not self.hasUniqueMessage:
                         self.addToHeap(message)
 
             elif sender_id == self.client._self_id and to_username in self.subscribed_users:
                 if self.hasUniqueMessage:
-                    self.removeFromHeap(sender_id, to_username, "once")
+                    self.removeFromHeap(sender_id, to_id, "once")
 
-    async def createMessage(self, sender_id):
-        context = await self.client.get_messages(sender_id, limit=self.numberOfMessagesInContext)
-        contextList = []
-        for message in context:
-            contextList.append(message.raw_text)
-        message = Message.MessageOnce(contextList)
+    async def createMessage(self, fromm, to, text, time):
+        context = text
+        message = MessageOnce(fromm, to, context, time)
         return message
 
-    async def manageInputCode(self):
-        print("Был запрошен код подтверждения")
-        # await MainBot.MainBot.manageInputCode
-        code = input("Введите код подтверждения: ")
-        return code
 
     def set_phone_password(self, phone, password):
         self.phone = phone
         self.password = password
         print("set_phone_and_password")
         print(self.phone)
+
     
     def set_code(self, code):
         self.code = code
@@ -125,14 +113,15 @@ class TgClient:
     def subscribe_user(self, userName):
         self.subscribed_users.append(userName)
         print(f"User {userName} has been subscribed to {self.name}")
+        print(self.subscribed_users)
 
     def addToHeap(self, message):
         heap.addMessage(message)
         self.hasUniqueMessage = True
         pass
 
-    def removeFromHeap(self, user, subscribedUser):
-        heap.delMessage(user, subscribedUser)
+    def removeFromHeap(self, userId, subscribedUser):
+        heap.delMessage(userId, subscribedUser)
         self.hasUniqueMessage = False
         print(f"Message from {subscribedUser} has been removed from heap")
 

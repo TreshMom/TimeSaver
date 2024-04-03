@@ -34,42 +34,60 @@ async def input_reg_prompt(clbck: CallbackQuery, state: FSMContext):
 
 @router.message(States.reg_prompt)
 async def registration(msg: Message, state: FSMContext):
-    api_id, api_hash = map(lambda st: st.strip(), msg.text.split(","))
-    mesg = await msg.answer(f"api_id :{api_id}, api_hash : {api_hash}")
-    res = await utils.registration(state, api_id, api_hash)
-    if res == -1:
-        await mesg.edit_text(text.error_text)
-    elif res == 1:
-        await msg.answer(text.aut_text)
-        await state.set_state(States.aut_prompt)
+    try:
+        api_id, api_hash = map(lambda st: st.strip(), msg.text.split(","))
+        mesg = await msg.answer(f"api_id :{api_id}, api_hash : {api_hash}")
+        res = await utils.registration(state, api_id, api_hash)
+        if res == -1:
+            await mesg.edit_text(text.error_text)
+        elif res == 1:
+            await msg.answer(text.aut_text)
+            await state.set_state(States.aut_prompt)
+    except Exception as e:
+        await msg.answer(f"Что-то не так. Еще раз: {text.reg_text}")
+        await state.set_state(States.reg_prompt)
+
+
+
 
 
 @router.message(States.aut_prompt)
 async def get_phone_and_password(msg: Message, state: FSMContext):
-    phone, password = map(lambda st: st.strip(), msg.text.split(","))
-    mesg = await msg.answer(f"{phone}, {password}")
-    res = await utils.set_phone_password(state, phone, password)
-    if res == -1:
-        await mesg.edit_text(text.error_text)
-    else:
-        await msg.answer(text.code_text)
-        await utils.get_code(state)
-        await state.set_state(States.code_prompt)
+    try:
+        phone, password = map(lambda st: st.strip(), msg.text.split(","))
+        mesg = await msg.answer(f"{phone}, {password}")
+        res = await utils.set_phone_password(state, phone, password)
+        if res == -1:
+            await mesg.edit_text(text.error_text)
+        else:
+            await msg.answer(text.code_text)
+            await utils.get_code(state)
+            await state.set_state(States.code_prompt)
+    except Exception as e:
+        print(e)
+        await msg.answer(f"Что-то не так. Еще раз: {text.aut_text}")
+        await state.set_state(States.aut_prompt)
+
 
 
 @router.message(States.code_prompt)
 async def get_code(msg: Message, state: FSMContext):
-    code = check_format(msg.text)
-    if code is not None: 
-        print(code)
-        mesg = await msg.answer("krasava")
-        res = await utils.run_bot(msg, state, code) 
-        if res == -1:
-            await mesg.edit_text(text.error_text)
+    try:
+        code = check_format(msg.text)
+        if code is not None:
+            print(code)
+            mesg = await msg.answer("krasava")
+            res = await utils.run_bot(msg, state, code)
+            if res == -1:
+                await mesg.edit_text(text.error_text)
+            else:
+                print("disconnect")
         else:
-            print("disconnect")
-    else:
-        await msg.answer(text.error_text)
+            await msg.answer(text.error_text)
+    except Exception as e:
+        await msg.answer(f"Что-то не так. Еще раз: {text.code_text}")
+        await state.set_state(States.code_prompt)
+
 
 
 def check_format(code: str):

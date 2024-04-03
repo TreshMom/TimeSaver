@@ -4,11 +4,11 @@ from typing import Dict
 
 
 class Message(ABC):
-    def __init__(self, context, to: str, text_to_reply: str):
+    def __init__(self, context, to: str, text_to_reply: str, timee):
         self.from_ = context
         self.to: str = to
         self.to_reply: str = text_to_reply
-        self.closest_time_to_send: datetime = None
+        self.time: datetime = timee
         self.empty = False
         self.time = datetime.now()
 
@@ -17,7 +17,7 @@ class Message(ABC):
         pass
 
     def get_time(self):
-        return self.closest_time_to_send
+        return self.time
 
     def is_empty(self):
         return self.empty

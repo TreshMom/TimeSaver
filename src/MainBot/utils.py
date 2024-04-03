@@ -3,7 +3,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import BaseStorage, StateType, StorageKey
 from TgClient import TgClient
 from . import testBox
-import Message
 from datetime import *
 import aiogram.types
 from . import text

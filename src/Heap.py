@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta
 import time
+import asyncio
+import time as t
+
 import heapq
 from Message import *
 
@@ -54,12 +57,18 @@ class Heap:
         return self.heap[0]
 
     def run(self):
+        print("Куча запущена")
         while True:
             if not self.isEmpty():
                 now = datetime.now()
-                minMessage = self.top()
-                minMessageTime = minMessage.time
-                if now - minMessageTime > timedelta(minutes=5):
-                    self.send()
-                    break
-                time.sleep(5)
+                try:
+                    minMessage = self.top()
+                    minMessageTime = minMessage.time
+                    if now - minMessageTime > timedelta(minutes=5):
+                        self.send()
+                        break
+                    time.sleep(5)
+                except Exception as e:
+                    print("Вероятно, куча пустая")
+                    t.sleep(5)
+
