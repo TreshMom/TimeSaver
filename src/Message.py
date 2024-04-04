@@ -25,6 +25,9 @@ class Message(ABC):
     def __lt__(self, other):
         return self.time < other.time
 
+    def __lt__(self, other):
+        return self.time < other.time
+
 
 class MessageSchedule(Message):
     def __init__(self, period: timedelta, start: datetime,  *args, **kwars):
@@ -50,6 +53,9 @@ class MessageOnce(Message):
         super().__init__(*args, **kwars)
         self.closest_time_to_send = time_to_send
 
+    def __lt__(self, other):
+        return self.closest_time_to_send < other.closest_time_to_send
+
     async def send(self):
         self.create_text()
         await self.from_.send_message(self.to, self.text)
@@ -64,4 +70,4 @@ class MessageOnce(Message):
 
 
 def generate_text(prev_msg: str):
-    return "Tolik"
+    return "Сгенерированный текст"

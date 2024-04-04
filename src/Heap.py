@@ -14,6 +14,7 @@ class Heap:
 
     def addMessage(self, message: Message):
         heapq.heappush(self.heap, message)
+        print("Сообщение добавлено в кучу")
 
     def send(self, message: Message):
         for i, val in enumerate(self.heap):
@@ -22,10 +23,6 @@ class Heap:
                 break
         message.send()
         heapq.heappop(self.heap)
-
-    def send(self):
-        message = heapq.heappop(self.heap)
-        message.send()
     
     def delMessage(self, fromm, to):
         for i, val in enumerate(self.heap):
@@ -56,19 +53,21 @@ class Heap:
         """
         return self.heap[0]
 
-    def run(self):
+    def run(self, loop):
         print("Куча запущена")
         while True:
-            if not self.isEmpty():
-                now = datetime.now()
-                try:
-                    minMessage = self.top()
-                    minMessageTime = minMessage.time
-                    if now - minMessageTime > timedelta(minutes=5):
-                        self.send()
+            now = datetime.now()
+            try:
+                minMessage = self.top()
+                minMessageTime = minMessage.time
+                if now - minMessageTime > timedelta(minutes=5):
+                    if not self.top().is_empty():
+                        future = asyncio.run_coroutine_threadsafe(self.top().send(), loop)
+                        future.result()
+                        print("Сообщение из кучи добавлено в эвент луп главного потока")
                         break
-                    time.sleep(5)
-                except Exception as e:
-                    print("Вероятно, куча пустая")
-                    t.sleep(5)
-
+                t.sleep(5)
+            except Exception as e:
+                print("Вероятно, куча пустая")
+                print(e)
+                t.sleep(5)
