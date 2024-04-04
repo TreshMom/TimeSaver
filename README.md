@@ -12,8 +12,8 @@
 * Золотухин Илья 
 
 ### Запуск
-Добавить токен бота в src/MainBot/config.py 
-Запустить скрипт start.sh из корня репозитория
+* Добавить токен бота в src/MainBot/config.py 
+* Запустить скрипт start.sh из корня репозитория
 
 ### Ссылки
 * [Репозиторий](https://github.com/TreshMom/TimeServer)
