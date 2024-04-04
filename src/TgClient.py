@@ -8,6 +8,7 @@ from telethon.errors import SessionPasswordNeededError
 import time
 from Message import Message
 # import myData
+
 import MainBot.handler as mainbot
 import datetime
 
@@ -35,16 +36,6 @@ class TgClient:
         self.password = None
         self.code = None
 
-        self.numberOfMessagesInContext = 10
-
-        @self.client.on(events.MessageEdited)
-        async def handler(event):
-            sender = await event.get_sender()
-            sender_id = sender.id
-            sender_username = sender.username
-
-            if sender_username in self.subscribed_users:
-                await self.client.send_message(sender_id, "Хули редактируешь")
 
         @self.client.on(events.NewMessage)
         async def handler(event):

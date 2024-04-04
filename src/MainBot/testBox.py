@@ -11,6 +11,7 @@ def addMsg(item):
     with lock:
         heap.addMessage(item)
 
+
 def notifyMsgs(loop):
     with lock:
         # print(heap)
@@ -19,6 +20,7 @@ def notifyMsgs(loop):
             if not i.is_empty():
                 future = asyncio.run_coroutine_threadsafe(i.send(), loop)
                 future.result()
+
 
 def while_loop(loop):
     while True:

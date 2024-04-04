@@ -7,8 +7,6 @@ from .testBox import *
 from datetime import *
 from .states import States
 
-from TgClient import TgClient
-
 from . import kb, text, utils
 
 router = Router()
