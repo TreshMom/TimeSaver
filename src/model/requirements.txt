@@ -1,0 +1,15 @@
+datasets
+deep_translator
+hydra-core
+numpy
+omegaconf
+pandarallel
+pandas
+python-dotenv
+python_telegram_bot
+PyYAML
+scikit_learn
+torch
+tqdm
+transformers
+wandb
