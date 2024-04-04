@@ -144,8 +144,9 @@ class TgClient:
         self.hasUniqueMessage = False
         print(f"Message from {subscribedUser} has been removed from heap")
 
-    def unsubscribeUser(self, tgID):
-        self.subscribed_users.remove(tgID)
+    async def unsubscribeUser(self, tgID):
+        username = (await self.client.get_entity(tgID)).username
+        self.subscribed_users.remove(username.lstrip("@"))
         self.hasUniqueMessage = False
         heap.delMessages(tgID)
 

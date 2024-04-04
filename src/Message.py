@@ -11,6 +11,7 @@ class Message(ABC):
         self.time: datetime = timee
         self.empty = False
         self.time = datetime.now()
+        self.closest_time_to_send = datetime.now()
 
     @abstractmethod
     def send(self):
@@ -21,12 +22,12 @@ class Message(ABC):
 
     def is_empty(self):
         return self.empty
+
+    def __str__(self) -> str:
+        return self.to_reply
     
     def __lt__(self, other):
-        return self.time < other.time
-
-    def __lt__(self, other):
-        return self.time < other.time
+        return self.closest_time_to_send < other.closest_time_to_send
 
 
 class MessageSchedule(Message):
@@ -45,7 +46,10 @@ class MessageSchedule(Message):
         return self.closest_time_to_send + self.period
 
     def __str__(self) -> str:
-        return self.text
+        return self.to_reply
+
+    def __lt__(self, other):
+        return self.closest_time_to_send < other.closest_time_to_send
 
 
 class MessageOnce(Message):
