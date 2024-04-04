@@ -12,5 +12,6 @@
 * Золотухин Илья 
 
 == Ссылки ==
-* https://github.com/TreshMom/TimeServer
-* @Hahaton_TimeSaver_bot
+* [https://github.com/TreshMom/TimeServer Репозиторий]
+* [https://t.me/Hahaton_TimeSaver_bot Телеграм бот]
+* [https://docs.google.com/presentation/d/16d0Y6-IDXK_GB-_qnctFkEA0C_V4ny3M5p_0wdABqak/edit?usp=sharing Презентация]
