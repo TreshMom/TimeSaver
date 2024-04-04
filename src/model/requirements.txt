@@ -13,6 +13,3 @@ torch
 tqdm
 transformers
 wandb
-aiogram==3.4.1
-Telethon==1.34.0
-
