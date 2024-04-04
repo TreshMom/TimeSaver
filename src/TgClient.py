@@ -1,23 +1,21 @@
 from telethon import TelegramClient, events
 import asyncio
 import sys
-from main import *
 
-from MainBot.testBox import heap
-import Heap
 import telethon
 
 
 from telethon.errors import SessionPasswordNeededError
 import time
 
-from Message import *
+from Message import MessageOnce
 import MainBot.handler as mainbot
 import datetime
-
+from Heap import *
+from main import *
 
 def get_name():
-    return str((datetime.datetime.now() - datetime.datetime(2021,1,1)).total_seconds()) + ".session"
+    return str((datetime.now() - datetime(2021,1,1)).total_seconds()) + ".session"
 
 class TgClient:
 
@@ -47,7 +45,7 @@ class TgClient:
 
             if sender_username in self.subscribed_users:
                 print(f"Received a message from {sender_username or sender_id}: {event.raw_text}")
-
+                print(event.date)
                 timeOfMessage = event.date
                 lastMyMessage = None
                 lastMessages = await self.client.get_messages(sender_id, limit=100)
@@ -61,8 +59,8 @@ class TgClient:
                 timeDeltaSeconds = timeDelta.total_seconds()
                 print(f"timeDeltaSeconds {timeDeltaSeconds}")
                 if timeDeltaSeconds > 10 and not self.hasUniqueMessage:
-                    timeToSend = timeOfMessage + datetime.timedelta(seconds=10)
-                    message: MessageOnce = await self.createMessage(self.client._self_id, sender_id, event.raw_text, timeOfMessage, timeToSend)
+                    timeToSend = timeOfMessage + timedelta(seconds=10)
+                    message: MessageOnce = self.createMessage(sender_id, event.raw_text, timeToSend)
                     if not self.hasUniqueMessage:
                         self.addToHeap(message)
 
@@ -70,9 +68,9 @@ class TgClient:
                 if self.hasUniqueMessage:
                     self.removeFromHeap(sender_id, to_id)
 
-    async def createMessage(self, fromm, to, text, time, timeToSend):
-        context = text
-        message = MessageOnce(fromm, to, context, time, timeToSend)
+    def createMessage(self, to, text, timeToSend):
+        message = MessageOnce(timeToSend, self, to, text)
+        print("добавили сообщение")
         return message
 
 
@@ -135,7 +133,7 @@ class TgClient:
         print(self.subscribed_users)
 
     def addToHeap(self, message):
-        heap.addMessage(message)
+        heap.addToHeap(message)
         self.hasUniqueMessage = True
         pass
 

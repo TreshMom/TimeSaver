@@ -4,21 +4,15 @@ from typing import Dict
 
 
 class Message(ABC):
-    def __init__(self, context, to: str, text_to_reply: str, timee):
+    def __init__(self, context, to: str, text_to_reply: str):
         self.from_ = context
         self.to: str = to
         self.to_reply: str = text_to_reply
-        self.time: datetime = timee
         self.empty = False
-        self.time = datetime.now()
-        self.closest_time_to_send = datetime.now()
 
     @abstractmethod
     def send(self):
         pass
-
-    def get_time(self):
-        return self.time
 
     def is_empty(self):
         return self.empty
@@ -62,8 +56,9 @@ class MessageOnce(Message):
 
     async def send(self):
         self.create_text()
-        await self.from_.send_message(self.to, self.text)
-        self.empty = True
+        if self.closest_time_to_send.replace(tzinfo=timezone.utc) >= datetime.now(tzinfo=timezone.utc):
+            await self.from_.send_message(self.to, self.text)
+            self.empty = True
 
     def create_text(self):
         try:
@@ -71,6 +66,12 @@ class MessageOnce(Message):
         except Exception as e:
             print(e)
             return -1
+        
+    def __str__(self) -> str:
+        return super().__str__()
+    
+    def get_time(self):
+        return self.closest_time_to_send
 
 
 def generate_text(prev_msg: str):

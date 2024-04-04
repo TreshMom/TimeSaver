@@ -6,6 +6,7 @@ from . import testBox
 from datetime import *
 import aiogram.types
 from . import text
+import Message
 
 async def registration(context: FSMContext, api_id: str, api_hash: str):
     try:

@@ -10,12 +10,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from MainBot import config
 from MainBot import handler
 import threading
-from MainBot.testBox import *
+from Heap import *
 
 
 ioloop = asyncio.new_event_loop()
-heap = Heap()
-
 
 async def main():
     bot = Bot(config.bot_token)
@@ -30,5 +28,6 @@ async def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     ioloop.run_until_complete(ioloop.create_task(main()))
     ioloop.close()
