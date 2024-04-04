@@ -142,6 +142,7 @@ async def add_regular_massage(msg: Message, state: FSMContext):
             await msg.answer(text.error_text)
         else:
             await msg.answer(text.add_reg_text_correct.format(name=tg_id))
+            await menu(msg, state)
     except Exception as e:
         print(e)
         await msg.answer(text.error_text)

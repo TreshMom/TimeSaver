@@ -70,15 +70,14 @@ class Heap:
     def run(self, loop):
         print("Куча запущена")
         while True:
-            if len(self.heap) == 0:
-                # print(" куча пустая ")
-                t.sleep(0.5)
-                continue
-            minMessage = self.top()
-            
-            # print("before lock run(self, loop)")
             try:
                 with self.lock:
+                    if len(self.heap) == 0:
+                        # print(" куча пустая ")
+                        t.sleep(0.5)
+                        continue
+
+                    minMessage = self.top()
                     # print("after lock run(self, loop)")
                     # удаляем сообщение из головы 
                     if minMessage.can_send():
