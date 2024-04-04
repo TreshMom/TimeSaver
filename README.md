@@ -14,4 +14,4 @@
 == Ссылки ==
 * [https://github.com/TreshMom/TimeServer Репозиторий]
 * [https://t.me/Hahaton_TimeSaver_bot Телеграм бот]
-* [https://docs.google.com/presentation/d/16d0Y6-IDXK_GB-_qnctFkEA0C_V4ny3M5p_0wdABqak/edit?usp=sharing Презентация]
+* [https://docs.google.com/presentation/d/16SPa3Xv2rfZBDSCJYRZ3vXaa9dJab_nA Презентация]
