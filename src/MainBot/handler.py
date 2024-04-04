@@ -36,38 +36,35 @@ async def input_reg_prompt(clbck: CallbackQuery, state: FSMContext):
 async def registration(msg: Message, state: FSMContext):
     try:
         api_id, api_hash = map(lambda st: st.strip(), msg.text.split(","))
-        mesg = await msg.answer(f"api_id :{api_id}, api_hash : {api_hash}")
+        # mesg = await msg.answer(f"api_id :{api_id}, api_hash : {api_hash}")
         res = await utils.registration(state, api_id, api_hash)
         if res == -1:
-            await mesg.edit_text(text.error_text)
+            await msg.edit_text(text.error_text)
         elif res == 1:
             await msg.answer(text.aut_text)
             await state.set_state(States.aut_prompt)
     except Exception as e:
-        await msg.answer(f"Что-то не так. Еще раз: {text.reg_text}")
+        print(e)
+        await msg.answer(text.error_text)
         await state.set_state(States.reg_prompt)
-
-
-
 
 
 @router.message(States.aut_prompt)
 async def get_phone_and_password(msg: Message, state: FSMContext):
     try:
         phone, password = map(lambda st: st.strip(), msg.text.split(","))
-        mesg = await msg.answer(f"{phone}, {password}")
+        # mesg = await msg.answer(f"{phone}, {password}")
         res = await utils.set_phone_password(state, phone, password)
         if res == -1:
-            await mesg.edit_text(text.error_text)
+            await msg.edit_text(text.error_text)
         else:
             await msg.answer(text.code_text)
             await utils.get_code(state)
             await state.set_state(States.code_prompt)
     except Exception as e:
         print(e)
-        await msg.answer(f"Что-то не так. Еще раз: {text.aut_text}")
+        await msg.answer(text.error_text)
         await state.set_state(States.aut_prompt)
-
 
 
 @router.message(States.code_prompt)
@@ -85,9 +82,9 @@ async def get_code(msg: Message, state: FSMContext):
         else:
             await msg.answer(text.error_text)
     except Exception as e:
+        print(e)
         await msg.answer(f"Что-то не так. Еще раз: {text.code_text}")
         await state.set_state(States.code_prompt)
-
 
 
 def check_format(code: str):
@@ -107,12 +104,11 @@ async def input_add_con_prompt(clbck: CallbackQuery, state: FSMContext):
 @router.message(States.add_con_prompt)
 async def add_contact(msg: Message, state: FSMContext):
     prompt = msg.text
-    mesg = await msg.answer(text.check_text)
     res = await utils.add_contact(state, prompt)
     if res == -1:
-        await mesg.edit_text(text.error_text)
+        await msg.answer(text.error_text)
     else:
-        await mesg.edit_text(text.add_con_text_correct)
+        await msg.answer(text.add_con_text_correct)
         await menu(msg, state)
 
 
@@ -125,12 +121,11 @@ async def input_del_prompt(clbck: CallbackQuery, state: FSMContext):
 @router.message(States.del_prompt)
 async def delete_contact(msg: Message, state: FSMContext):
     prompt = msg.text
-    mesg = await msg.answer(text.check_text)
     res = await utils.delete_contact(state, prompt)
     if res == -1:
-        await mesg.edit_text(text.error_text)
+        await msg.answer(text.error_text)
     else:
-        await mesg.edit_text(text.del_text_correct)
+        await msg.answer(text.del_text_correct)
         await menu(msg, state)
 
 
@@ -144,16 +139,13 @@ async def input_add_reg_prompt(clbck: CallbackQuery, state: FSMContext):
 async def add_regular_massage(msg: Message, state: FSMContext):
     try:
         tg_id, mes_to, begin, period = map(lambda st: st.strip(), msg.text.split(","))
-        mesg = await msg.answer(text.check_text)
-        print(begin)
         begin = datetime.strptime(begin,
                   '%d/%m/%y %H:%M:%S')
-        print(begin)
         res = await utils.add_regular_massage(state, tg_id, mes_to, begin, period)
         if res == -1:
-            await mesg.answer(text.error_text)
+            await msg.answer(text.error_text)
         else:
-            await mesg.answer(text.add_reg_text_correct)
+            await msg.answer(text.add_reg_text_correct)
             await menu(msg, state)
     except Exception as e:
         print(e)

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import *
 from typing import Dict
+from template_gen import *
 
 
 class Message(ABC):
@@ -55,10 +56,11 @@ class MessageOnce(Message):
         return self.closest_time_to_send < other.closest_time_to_send
 
     async def send(self):
-        self.create_text()
-        if self.closest_time_to_send.replace(tzinfo=timezone.utc) >= datetime.now(tzinfo=timezone.utc):
+        if self.closest_time_to_send.replace(tzinfo=timezone.utc) <= datetime.now(timezone.utc):
+            self.create_text()
             await self.from_.send_message(self.to, self.text)
             self.empty = True
+            self.from_.hasUniqueMessage[self.to] = False
 
     def create_text(self):
         try:
@@ -75,4 +77,6 @@ class MessageOnce(Message):
 
 
 def generate_text(prev_msg: str):
-    return "Сгенерированный текст"
+    ans = generate_template(prev_msg)
+    print(f"Сгенерировался текст {ans}")
+    return ans

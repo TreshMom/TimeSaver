@@ -12,8 +12,9 @@ lock = threading.Lock()
 class Heap:
 
     def __init__(self):
-        self.heap = []
-        heapq.heapify(self.heap)
+        with lock:
+            self.heap = []
+            heapq.heapify(self.heap)
 
     def addMessage(self, message: Message):
         with lock:
@@ -37,6 +38,7 @@ class Heap:
                 if val.fromm == fromm and val.to == to and isinstance(val, MessageSchedule):
                     self.heap[i], self.heap[-1] = self.heap[-1], self.heap[i]
                     break
+            
             heapq.heappop(self.heap)
 
     def delMessages(self, tgID):
@@ -67,17 +69,17 @@ class Heap:
         print("Куча запущена")
         while True:
             now = datetime.now(timezone.utc)
-            try:
-                with lock:
+            with lock:
+                try:
                     #print("size of heap", len(self.heap))
                     if len(self.heap) == 0:
                         print(" куча пустая ")
-                        t.sleep(5)
+                        t.sleep(0.5)
                         continue
                     minMessage = self.top()
 
                     # удаляем любое сообщение 
-                    heapq.heappop()
+                    heapq.heappop(self.heap)
 
                     future = asyncio.run_coroutine_threadsafe(minMessage.send(), loop)
                     future.result()
@@ -86,11 +88,11 @@ class Heap:
                     if not minMessage.is_empty():
                         heapq.heappush(self.heap, minMessage)
                     print("сообщения :", self.heap)
-                t.sleep(5)
-            except Exception as e:
-                print("Вероятно, куча пустая")
-                print(e)
-                t.sleep(5)
+                    t.sleep(0.5)
+                except Exception as e:
+                    print("Вероятно, куча пустая")
+                    print(e)
+                    t.sleep(5)
 
 heap = Heap()
 

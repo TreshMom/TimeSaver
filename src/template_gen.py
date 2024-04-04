@@ -21,5 +21,4 @@ def generate_template(token):
     else:
         return "Я не понимаю твоего настроения. Я сейчас занят, но обязательно напишу позже!"
 
-answer = generate_template(token)
-print(answer)
+

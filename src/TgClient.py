@@ -26,7 +26,7 @@ class TgClient:
 
         self.subscribed_users = []
         self.client = TelegramClient(get_name(), self.api_id, self.api_hash, device_model="My MAC", system_version="10.15.7", app_version="0.0.1", lang_code="en")
-        self.hasUniqueMessage = False
+        self.hasUniqueMessage = {}
         self.phone = None
         self.password = None
         self.code = None
@@ -39,8 +39,14 @@ class TgClient:
             sender_username = sender.username
             to = await event.get_chat()
             to_id = to.id
-            to_username = None
-            print(f"ПОЛУЧЕНО СООБЩЕНИЕ от {sender_username}")
+            to_username = (await client.get_entity(user_id)).username
+            print(f"ПОЛУЧЕНО СООБЩЕНИЕ от {sender_username} к {to_username}")
+
+            if to_id not in self.hasUniqueMessage.keys():
+                self.hasUniqueMessage[to_id] = False
+
+
+            print(sender_id, self.client._self_id, to_username, self.subscribed_users)
 
 
             if sender_username in self.subscribed_users:
@@ -58,15 +64,17 @@ class TgClient:
                 timeDelta = timeOfMessage - lastMyMessageDate
                 timeDeltaSeconds = timeDelta.total_seconds()
                 print(f"timeDeltaSeconds {timeDeltaSeconds}")
-                if timeDeltaSeconds > 10 and not self.hasUniqueMessage:
+                if timeDeltaSeconds > 2 and not self.hasUniqueMessage[to_id]:
                     timeToSend = timeOfMessage + timedelta(seconds=10)
                     message: MessageOnce = self.createMessage(sender_id, event.raw_text, timeToSend)
-                    if not self.hasUniqueMessage:
-                        self.addToHeap(message)
+                    if not self.hasUniqueMessage[to_id]:
+                        self.addToHeap(message, to_id)
 
             elif sender_id == self.client._self_id and to_username in self.subscribed_users:
-                if self.hasUniqueMessage:
+                print("УДАЛЕНИЕ СООБЩЕНИЕ, ТАК КАК ПОСТУПИЛ ОТВЕТ")
+                if self.hasUniqueMessage[to_id]:
                     self.removeFromHeap(sender_id, to_id)
+
 
     def createMessage(self, to, text, timeToSend):
         message = MessageOnce(timeToSend, self, to, text)
@@ -132,19 +140,19 @@ class TgClient:
         print(f"User {userName} has been subscribed to {self.name}")
         print(self.subscribed_users)
 
-    def addToHeap(self, message):
-        heap.addToHeap(message)
-        self.hasUniqueMessage = True
+    def addToHeap(self, message, toId):
+        heap.addMessage(message)
+        self.hasUniqueMessage[toId] = True
         pass
 
     def removeFromHeap(self, userId, subscribedUser):
         heap.delMessage(userId, subscribedUser)
-        self.hasUniqueMessage = False
+        self.hasUniqueMessage[subscribedUser] = False
         print(f"Message from {subscribedUser} has been removed from heap")
 
     async def unsubscribeUser(self, tgID):
         username = (await self.client.get_entity(tgID)).username
         self.subscribed_users.remove(username.lstrip("@"))
-        self.hasUniqueMessage = False
+        self.hasUniqueMessage[tgID] = False
         heap.delMessages(tgID)
 
