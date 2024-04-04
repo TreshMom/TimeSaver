@@ -12,7 +12,7 @@
 * Золотухин Илья 
 
 « Ссылки »
-* [https://github.com/TreshMom/TimeServer Репозиторий]
-* [https://t.me/Hahaton_TimeSaver_bot Телеграм бот]
-* [https://docs.google.com/presentation/d/16SPa3Xv2rfZBDSCJYRZ3vXaa9dJab_nA Презентация]
-* [https://youtube.com/shorts/80vI3dND3W4?feature=share Видео]
+* [Репозиторий](https://github.com/TreshMom/TimeServer)
+* [Телеграм бот](https://t.me/Hahaton_TimeSaver_bot)
+* [Презентация](https://docs.google.com/presentation/d/16SPa3Xv2rfZBDSCJYRZ3vXaa9dJab_nA)
+* [Видео](https://youtube.com/shorts/80vI3dND3W4?feature=share)
