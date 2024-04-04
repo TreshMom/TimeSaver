@@ -7,17 +7,19 @@ import heapq
 from Message import *
 import threading
 from datetime import datetime, timezone 
-lock = threading.Lock()
 
 class Heap:
 
     def __init__(self):
-        with lock:
+        self.lock = threading.Lock()
+        with self.lock:
             self.heap = []
             heapq.heapify(self.heap)
 
     def addMessage(self, message: Message):
-        with lock:
+        print("before lock")
+        with self.lock:
+            print("after lock")
             heapq.heappush(self.heap, message)
             print("Сообщение добавлено в кучу")
             print("размер кучи", len(self.heap))
@@ -32,17 +34,17 @@ class Heap:
     #     heapq.heappop(self.heap)
     
     def delMessage(self, fromm, to):
-        with lock:
+        with self.lock:
             print("def delMessage(self, fromm, to):")
             for i, val in enumerate(self.heap):
                 if val.fromm == fromm and val.to == to and isinstance(val, MessageSchedule):
                     self.heap[i], self.heap[-1] = self.heap[-1], self.heap[i]
                     break
-            
-            heapq.heappop(self.heap)
+            self.heap.pop()
+            heapq.heapify(self.heap)
 
     def delMessages(self, tgID):
-        with lock:
+        with self.lock:
             print("def delMessages(self, tgID):")
             def removeByIndices(array: list, indices: list):
                 indices.sort(reverse=True)
@@ -68,31 +70,34 @@ class Heap:
     def run(self, loop):
         print("Куча запущена")
         while True:
-            now = datetime.now(timezone.utc)
-            with lock:
-                try:
-                    #print("size of heap", len(self.heap))
-                    if len(self.heap) == 0:
-                        print(" куча пустая ")
-                        t.sleep(0.5)
-                        continue
-                    minMessage = self.top()
+            if len(self.heap) == 0:
+                # print(" куча пустая ")
+                t.sleep(0.5)
+                continue
+            minMessage = self.top()
+            
+            # print("before lock run(self, loop)")
+            try:
+                with self.lock:
+                    # print("after lock run(self, loop)")
+                    # удаляем сообщение из головы 
+                    if minMessage.can_send():
+                        heapq.heappop(self.heap)
 
-                    # удаляем любое сообщение 
-                    heapq.heappop(self.heap)
+                        minMessage.update()
 
-                    future = asyncio.run_coroutine_threadsafe(minMessage.send(), loop)
-                    future.result()
-                    print("Сообщение из кучи добавлено в эвент луп главного потока")
+                        future = asyncio.run_coroutine_threadsafe(minMessage.send(), loop)
+                        # future.result()
+                        # print("Сообщение из кучи добавлено в эвент луп главного потока")
 
-                    if not minMessage.is_empty():
-                        heapq.heappush(self.heap, minMessage)
-                    print("сообщения :", self.heap)
-                    t.sleep(0.5)
-                except Exception as e:
-                    print("Вероятно, куча пустая")
-                    print(e)
-                    t.sleep(5)
+                        if not minMessage.is_empty():
+                            heapq.heappush(self.heap, minMessage)
+                        # print("сообщения :", self.heap)
+                t.sleep(0.5)
+            except Exception as e:
+                print("Вероятно, куча пустая")
+                print(e)
+                t.sleep(5)
 
 heap = Heap()
 

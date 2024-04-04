@@ -1,9 +1,7 @@
 from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
-from aiogram import flags
 from aiogram.fsm.context import FSMContext
-from .testBox import *
 from datetime import *
 from .states import States
 
@@ -37,7 +35,7 @@ async def registration(msg: Message, state: FSMContext):
     try:
         api_id, api_hash = map(lambda st: st.strip(), msg.text.split(","))
         # mesg = await msg.answer(f"api_id :{api_id}, api_hash : {api_hash}")
-        res = await utils.registration(state, api_id, api_hash)
+        res = await utils.registration(msg, state, api_id, api_hash)
         if res == -1:
             await msg.edit_text(text.error_text)
         elif res == 1:
@@ -72,18 +70,16 @@ async def get_code(msg: Message, state: FSMContext):
     try:
         code = check_format(msg.text)
         if code is not None:
-            print(code)
-            mesg = await msg.answer("krasava")
             res = await utils.run_bot(msg, state, code)
             if res == -1:
-                await mesg.edit_text(text.error_text)
+                await msg.answer(text.error_text)
             else:
-                print("disconnect")
+                print("krasava")
         else:
             await msg.answer(text.error_text)
     except Exception as e:
         print(e)
-        await msg.answer(f"Что-то не так. Еще раз: {text.code_text}")
+        await msg.answer(text.error_text)
         await state.set_state(States.code_prompt)
 
 
@@ -103,12 +99,12 @@ async def input_add_con_prompt(clbck: CallbackQuery, state: FSMContext):
 
 @router.message(States.add_con_prompt)
 async def add_contact(msg: Message, state: FSMContext):
-    prompt = msg.text
-    res = await utils.add_contact(state, prompt)
+    contact = msg.text
+    res = await utils.add_contact(state, contact)
     if res == -1:
         await msg.answer(text.error_text)
     else:
-        await msg.answer(text.add_con_text_correct)
+        await msg.answer(text.add_con_text_correct.format(name=contact))
         await menu(msg, state)
 
 
@@ -120,12 +116,12 @@ async def input_del_prompt(clbck: CallbackQuery, state: FSMContext):
 
 @router.message(States.del_prompt)
 async def delete_contact(msg: Message, state: FSMContext):
-    prompt = msg.text
-    res = await utils.delete_contact(state, prompt)
+    contact = msg.text
+    res = await utils.delete_contact(state, contact)
     if res == -1:
         await msg.answer(text.error_text)
     else:
-        await msg.answer(text.del_text_correct)
+        await msg.answer(text.del_text_correct.format(name=contact))
         await menu(msg, state)
 
 
@@ -141,12 +137,11 @@ async def add_regular_massage(msg: Message, state: FSMContext):
         tg_id, mes_to, begin, period = map(lambda st: st.strip(), msg.text.split(","))
         begin = datetime.strptime(begin,
                   '%d/%m/%y %H:%M:%S')
-        res = await utils.add_regular_massage(state, tg_id, mes_to, begin, period)
+        res = await utils.add_regular_massage(state, tg_id, mes_to, begin, timedelta(seconds=int(period)))
         if res == -1:
             await msg.answer(text.error_text)
         else:
-            await msg.answer(text.add_reg_text_correct)
-            await menu(msg, state)
+            await msg.answer(text.add_reg_text_correct.format(name=tg_id))
     except Exception as e:
         print(e)
         await msg.answer(text.error_text)

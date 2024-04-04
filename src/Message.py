@@ -17,6 +17,14 @@ class Message(ABC):
 
     def is_empty(self):
         return self.empty
+    
+    @abstractmethod
+    def can_send(self):
+        return True
+    
+    @abstractmethod
+    def update(self):
+        pass
 
     def __str__(self) -> str:
         return self.to_reply
@@ -33,18 +41,24 @@ class MessageSchedule(Message):
         self.closest_time_to_send = start
 
     async def send(self):
+        #if self.closest_time_to_send <= datetime.now():
         await self.from_.send_message(self.to, self.to_reply)
-        if self.closest_time_to_send >= datetime.now():
-            self.closest_time_to_send = self.set_new_time()
+        self.closest_time_to_send = self.set_new_time()
 
     def set_new_time(self):
         return self.closest_time_to_send + self.period
+
+    def can_send(self):
+        return self.closest_time_to_send <= datetime.now()
+    
+    def update(self):
+        self.closest_time_to_send = self.set_new_time()
 
     def __str__(self) -> str:
         return self.to_reply
 
     def __lt__(self, other):
-        return self.closest_time_to_send < other.closest_time_to_send
+        return self.closest_time_to_send.replace(tzinfo=timezone.utc) < other.closest_time_to_send.replace(tzinfo=timezone.utc)
 
 
 class MessageOnce(Message):
@@ -53,14 +67,18 @@ class MessageOnce(Message):
         self.closest_time_to_send = time_to_send
 
     def __lt__(self, other):
-        return self.closest_time_to_send < other.closest_time_to_send
+        return self.closest_time_to_send.replace(tzinfo=timezone.utc) < other.closest_time_to_send.replace(tzinfo=timezone.utc)
 
     async def send(self):
-        if self.closest_time_to_send.replace(tzinfo=timezone.utc) <= datetime.now(timezone.utc):
-            self.create_text()
-            await self.from_.send_message(self.to, self.text)
-            self.empty = True
-            self.from_.hasUniqueMessage[self.to] = False
+        self.create_text()
+        await self.from_.send_message(self.to, self.text)
+        self.from_.hasUniqueMessage[self.to] = False
+
+    def can_send(self):
+        return self.closest_time_to_send.replace(tzinfo=timezone.utc) <= datetime.now(timezone.utc)
+    
+    def update(self):
+        self.empty = True
 
     def create_text(self):
         try:

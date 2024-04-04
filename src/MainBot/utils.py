@@ -6,13 +6,14 @@ from . import testBox
 from datetime import *
 import aiogram.types
 from . import text
-import Message
+from Message import *
+from Heap import *
 
-async def registration(context: FSMContext, api_id: str, api_hash: str):
+async def registration(msg: aiogram.types.Message, context: FSMContext, api_id: str, api_hash: str):
     try:
         client = TgClient(api_id, api_hash)
         await context.set_data({"client": client})
-        res = await client.run()
+        res = await client.run(msg)
         if res == 1:
             return 1
         return 2
@@ -35,8 +36,7 @@ async def run_bot(msg: aiogram.types.Message, context: FSMContext, code: str):
     client = (await context.get_data())['client']
     client.set_code(code)
     try:
-        await client.run()
-        await msg.answer(text.reg_text_correct)
+        await client.run(msg)
     except Exception as e:
         print(e)
         return -1
@@ -47,14 +47,13 @@ async def add_contact(context: FSMContext, info: str):
         (await context.get_data())["client"].subscribe_user(info)
         return 1
     except Exception as e:
-        print("add_content")
         print(e)
         return -1
 
 
 async def delete_contact(context: FSMContext, info: str):
     try:
-        (await context.get_data())["client"].unsubscribeUser(info)
+        await ((await context.get_data())["client"]).unsubscribeUser(info)
         return 1
     except Exception as e:
         print(e)
@@ -64,5 +63,5 @@ async def delete_contact(context: FSMContext, info: str):
 async def add_regular_massage(context: FSMContext, to: str, text_to_reply: str, begin : datetime, period: timedelta):
     print(to, text_to_reply, begin, period)
     client = (await context.get_data())["client"]
-    testBox.addMsg(Message.MessageSchedule(period, begin, client, to, text_to_reply))
-    return 1
+    heap.addMessage(MessageSchedule(period, max(begin, datetime.now()), client, to, text_to_reply))
+    return 1 

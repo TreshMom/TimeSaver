@@ -3,11 +3,12 @@ import asyncio
 import sys
 
 import telethon
-
+from telethon.tl.types import User, Chat, Channel
 
 from telethon.errors import SessionPasswordNeededError
 import time
-
+import aiogram.types
+from MainBot import text
 from Message import MessageOnce
 import MainBot.handler as mainbot
 import datetime
@@ -39,15 +40,20 @@ class TgClient:
             sender_username = sender.username
             to = await event.get_chat()
             to_id = to.id
-            to_username = (await client.get_entity(user_id)).username
+            to_entity = await self.client.get_entity(to_id)
+            if isinstance(to_entity, User):
+                to_username = to_entity.username
+            elif isinstance(to_entity, (Chat, Channel)):
+                to_username = to_entity.title
+            else:
+                to_username = "Unknown Entity"
+
             print(f"ПОЛУЧЕНО СООБЩЕНИЕ от {sender_username} к {to_username}")
 
             if to_id not in self.hasUniqueMessage.keys():
                 self.hasUniqueMessage[to_id] = False
 
-
             print(sender_id, self.client._self_id, to_username, self.subscribed_users)
-
 
             if sender_username in self.subscribed_users:
                 print(f"Received a message from {sender_username or sender_id}: {event.raw_text}")
@@ -108,7 +114,7 @@ class TgClient:
     def get_code(self):
         return self.code
 
-    async def run(self):
+    async def run(self, msg: aiogram.types.Message):
         if not self.phone or not self.password or not self.code:
             print("no phone or password or code")
             return 1
@@ -123,6 +129,7 @@ class TgClient:
                 except telethon.errors.SessionPasswordNeededError:
                     await self.client.sign_in(password=self.password)
                 print("Запущен")
+                await msg.answer(text.reg_text_correct)
                 await self.client.run_until_disconnected()
                 print("after start")
             return 0
