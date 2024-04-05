@@ -11,8 +11,6 @@ moods = [
     'relief', 'remorse', 'sadness', 'surprise', 'neutral'
 ]
 
-token = 'Я ненавижу!'
-
 def generate_template(token):
     model = pipeline(model=ru_bart)
     mood = (model(token))[0]['label']
