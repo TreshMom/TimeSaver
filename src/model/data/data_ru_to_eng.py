@@ -48,5 +48,3 @@ if __name__ == '__main__':
     ru_simplified_dataset_final.push_to_hub("ru_go_emotions", config_name="simplified")
     ru_raw_dataset_final.push_to_hub("ru_go_emotions", config_name="raw")
 
-
-ru_bart = 'seara/rubert-tiny2-ru-go-emotions
