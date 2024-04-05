@@ -37,7 +37,7 @@ class Heap:
         with self.lock:
             print("def delMessage(self, fromm, to):")
             for i, val in enumerate(self.heap):
-                if val.fromm == fromm and val.to == to and isinstance(val, MessageSchedule):
+                if val.from_ == fromm and val.to == to and isinstance(val, MessageSchedule):
                     self.heap[i], self.heap[-1] = self.heap[-1], self.heap[i]
                     break
             self.heap.pop()
@@ -53,7 +53,7 @@ class Heap:
                 return array
             indices = []
             for i, val in enumerate(self.heap):
-                if val.fromm == tgID:
+                if val.from_ == tgID:
                     indices.append(i)
             self.heap = removeByIndices(self.heap, indices)
             heapq.heapify(self.heap)
@@ -71,6 +71,7 @@ class Heap:
         print("Куча запущена")
         while True:
             try:
+                print(len(self.heap))
                 with self.lock:
                     if len(self.heap) == 0:
                         # print(" куча пустая ")
